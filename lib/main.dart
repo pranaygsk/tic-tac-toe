@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -23,7 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool humanTurn = true;
-  //bool aiTurn = false;
+  bool aiTurn = false;
   List<String> displayXO = ['', '', '', '', '', '', '', '', ''];
   var myStyle = TextStyle(color: Colors.white, fontSize: 30);
   int humScore = 0;
@@ -33,14 +35,15 @@ class _HomePageState extends State<HomePage> {
   //String curr_player = 'human';
   //late String ai;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade800,
       body: Column(
         children: [
-          SizedBox(height: 40.0,),
+          SizedBox(
+            height: 40.0,
+          ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -118,17 +121,30 @@ class _HomePageState extends State<HomePage> {
 
   void _tapped(int index) {
     setState(() {
-      if (humanTurn && displayXO[index] == '') {
+      if (displayXO[index] == '') {
         displayXO[index] = 'X';
-        filledBoxes+=1;
-        humanTurn = !humanTurn;
-      } else if (!humanTurn && displayXO[index] == '') {
-        displayXO[index] = 'O';
-        filledBoxes+=1;
-        humanTurn = !humanTurn;
+        filledBoxes += 1;
+        if(filledBoxes<=7){
+          index = _aiCode();
+          displayXO[index] = 'O';
+          filledBoxes += 1;
+        }
       }
       _checkWinner();
     });
+  }
+
+  int _aiCode() {
+    //check all the available spaces
+    int randInt = Random().nextInt(9);
+    while (true) {
+      if(displayXO[randInt] == ''){
+        break;
+      }else{
+        randInt = Random().nextInt(9);
+      }
+    }
+    return randInt;
   }
 
   void _checkWinner() {
@@ -179,8 +195,7 @@ class _HomePageState extends State<HomePage> {
         displayXO[2] == displayXO[6] &&
         displayXO[2] != '') {
       _showWinDialog(displayXO[2]);
-    }
-    else if(filledBoxes == 9){
+    } else if (filledBoxes == 9) {
       _showDrawDialog();
     }
   }
@@ -220,26 +235,29 @@ class _HomePageState extends State<HomePage> {
         displayXO[i] = '';
       }
     });
-    filledBoxes=0;
+    filledBoxes = 0;
+    humanTurn = true;
   }
 
   void _showDrawDialog() {
     showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (BuildContext context){
-      return AlertDialog(
-        title: Text("Game is Drawn"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              _clearBoard();
-              Navigator.of(context).pop(); //It removes the Alert Dialog
-            },
-            child: Text("Play Again"),
-          ),
-        ],
-      );
-    });
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Game is Drawn"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _clearBoard();
+                  Navigator.of(context).pop(); //It removes the Alert Dialog
+                },
+                child: Text("Play Again"),
+              ),
+            ],
+          );
+        });
   }
+
+
 }
