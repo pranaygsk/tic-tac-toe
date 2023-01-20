@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 
 void main() => runApp(const MyApp());
 
@@ -122,13 +123,15 @@ class _HomePageState extends State<HomePage> {
   void _tapped(int index) {
     setState(() {
       if (displayXO[index] == '') {
-        displayXO[index] = 'X';
+        displayXO[index] = 'O';
         filledBoxes += 1;
         if(filledBoxes<=7){
           index = _aiCode();
-          displayXO[index] = 'O';
+          displayXO[index] = 'X';
           filledBoxes += 1;
         }
+      }else{
+        FlutterBeep.playSysSound(AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
       }
       _checkWinner();
     });
@@ -257,6 +260,12 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         });
+  }
+
+  void _play_beepsound() {
+
+
+
   }
 
 
